@@ -16,6 +16,7 @@ import {
 } from '../abis/types/generated.ts';
 import BONALICE_ABI from '../abis/BonALICE';
 import useUserProfile from '../contexts/UserProfile/useUserProfile.ts';
+import { createFromJSON } from '@libp2p/peer-id-factory';
 
 const useNodeBonALICE = () => {
   const [nodeBonALICE, setNodeBonALICE] = useState<BonALICE | null>(null);
@@ -23,14 +24,35 @@ const useNodeBonALICE = () => {
     useState(false);
   useState(false);
   const [peerID, setPeerID] = useState<string>('');
+  const [isPeerIDValid, setIsPeerIDValid] = useState<boolean>(true);
+
   const [nodeAddress, setNodeAddress] = useState<string>('');
   const { walletAddress } = useUserProfile();
-
   const { data: nodeBonALICEAddress } = useBonAliceOwnerOf({
     address: BONALICE_ADDRESS[getCurrentChainId()],
     args: nodeBonALICE ? [BigInt(nodeBonALICE.tokenId)] : undefined,
     watch: true,
   });
+
+  useEffect(() => {
+    if (peerID.length === 0) {
+      setIsPeerIDValid(true);
+      return;
+    }
+
+    setIsPeerIDValid(true);
+    const validatePeerID = async () => {
+      createFromJSON({ id: peerID })
+        .then(() => {
+          setIsPeerIDValid(true);
+        })
+        .catch(() => {
+          setIsPeerIDValid(false);
+        });
+    };
+
+    validatePeerID();
+  }, [peerID]);
 
   const { data: stakerAddressInfo } = useMuonNodeManagerStakerAddressInfo({
     address: MUON_NODE_MANAGER_ADDRESS[getCurrentChainId()],
@@ -139,6 +161,7 @@ const useNodeBonALICE = () => {
     setNodeAddress,
     isAddingNodeLoading,
     setIsAddingNodeLoading,
+    isPeerIDValid,
   };
 };
 

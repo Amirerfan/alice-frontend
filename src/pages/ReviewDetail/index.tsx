@@ -32,13 +32,13 @@ const ReviewDetail = () => {
     setNodeAddress,
     isMetamaskLoading,
     isTransactionLoading,
-    // isGettingNodeStatusLoading,
     isAddingNodeLoading,
     approvedBonALICEAddress,
     handleApproveClicked,
     isApproving,
     nodeBonALICEAddress,
     stakerAddressInfo,
+    isPeerIDValid,
   } = useNodeBonALICE();
 
   const { chainId, handleSwitchNetwork } = useUserProfile();
@@ -197,15 +197,20 @@ const ReviewDetail = () => {
         <div className="address-input__top text-sm mb-2 flex justify-between">
           <div className="address-input__title text-light-text">Peer ID</div>
         </div>
-        <div className="address-input__input-wrapper mb-9 flex items-center justify-between bg-catskill-white rounded-xl pl-5 pr-4 h-14">
-          <input
-            className="address-input__input placeholder-gray10 text-white font-medium w-full h-full bg-transparent outline-none"
-            placeholder={'Peer ID'}
-            type="text"
-            value={peerID}
-            onChange={(e) => setPeerID(e.target.value)}
-          />
-        </div>
+        <span className="address-input__input-wrapper mb-5 flex flex-col">
+          <div className="items-center justify-between bg-catskill-white rounded-xl pl-5 pr-4 h-14 mb-0.5">
+            <input
+              className="address-input__input placeholder-gray10 text-white font-medium w-full h-full bg-transparent outline-none"
+              placeholder={'Peer ID'}
+              type="text"
+              value={peerID}
+              onChange={(e) => setPeerID(e.target.value)}
+            />
+          </div>
+          <span className="text-red-600 text-sm font-bold min-h-[20px]">
+            {isPeerIDValid ? '' : 'Peer ID is invalid!'}
+          </span>
+        </span>
         {nodeBonALICEAddress ===
           MUON_NODE_STAKING_ADDRESS[getCurrentChainId()] &&
         stakerAddressInfo?.active ? (
@@ -249,6 +254,7 @@ const ReviewDetail = () => {
             className="btn btn--white mt-auto mx-auto"
             onClick={() => handleAddNodeClicked()}
             disabled={
+              !isPeerIDValid ||
               !nodeAddress ||
               !peerID ||
               !nodeBonALICE ||
