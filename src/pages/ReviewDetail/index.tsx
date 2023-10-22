@@ -39,6 +39,7 @@ const ReviewDetail = () => {
     nodeBonALICEAddress,
     stakerAddressInfo,
     isPeerIDValid,
+    isNodeAddressValid,
   } = useNodeBonALICE();
 
   const { chainId, handleSwitchNetwork } = useUserProfile();
@@ -180,21 +181,26 @@ const ReviewDetail = () => {
         {/*  onValueChanged={(value) => setNodeIP(value)}*/}
         {/*  className="mb-9"*/}
         {/*/>*/}
-        <div className="address-input__top text-sm mb-2 flex justify-between">
+        <div className="address-input__top text-sm mb-1 flex justify-between">
           <div className="address-input__title text-light-text">
             Node Address
           </div>
         </div>
-        <div className="address-input__input-wrapper mb-4 flex items-center justify-between bg-catskill-white rounded-xl pl-5 pr-4 h-14">
-          <input
-            className="address-input__input placeholder-gray10 text-white font-medium w-full h-full bg-transparent outline-none"
-            placeholder={'Node Address'}
-            type="text"
-            value={nodeAddress}
-            onChange={(e) => setNodeAddress(e.target.value)}
-          />
-        </div>
-        <div className="address-input__top text-sm mb-2 flex justify-between">
+        <span className="address-input__input-wrapper mb-1 flex flex-col">
+          <div className="items-center justify-between bg-catskill-white rounded-xl pl-5 pr-4 h-14 mb-0.5">
+            <input
+              className="address-input__input placeholder-gray10 text-white font-medium w-full h-full bg-transparent outline-none"
+              placeholder={'Node Address'}
+              type="text"
+              value={nodeAddress}
+              onChange={(e) => setNodeAddress(e.target.value)}
+            />
+          </div>
+          <span className="text-red-500 text-xs font-bold min-h-[20px]">
+            {isNodeAddressValid ? '' : 'Node Address is invalid!'}
+          </span>
+        </span>
+        <div className="address-input__top text-sm mb-1 flex justify-between">
           <div className="address-input__title text-light-text">Peer ID</div>
         </div>
         <span className="address-input__input-wrapper mb-5 flex flex-col">
@@ -207,7 +213,7 @@ const ReviewDetail = () => {
               onChange={(e) => setPeerID(e.target.value)}
             />
           </div>
-          <span className="text-red-600 text-sm font-bold min-h-[20px]">
+          <span className="text-red-500 text-xs font-bold min-h-[20px]">
             {isPeerIDValid ? '' : 'Peer ID is invalid!'}
           </span>
         </span>
@@ -254,6 +260,7 @@ const ReviewDetail = () => {
             className="btn btn--white mt-auto mx-auto"
             onClick={() => handleAddNodeClicked()}
             disabled={
+              !isNodeAddressValid ||
               !isPeerIDValid ||
               !nodeAddress ||
               !peerID ||

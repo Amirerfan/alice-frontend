@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BonALICE } from '../types';
 import { useAddNodeArgs, useApproveBonALICEArgs } from './useContractArgs.ts';
 import useWagmiContractWrite from './useWagmiContractWrite.ts';
@@ -33,6 +33,13 @@ const useNodeBonALICE = () => {
     args: nodeBonALICE ? [BigInt(nodeBonALICE.tokenId)] : undefined,
     watch: true,
   });
+
+  const isNodeAddressValid = useMemo(() => {
+    if (nodeAddress.length === 0) return true;
+
+    const re = /^0x[a-fA-F0-9]{40}$/;
+    return re.test(nodeAddress);
+  }, [nodeAddress]);
 
   useEffect(() => {
     if (peerID.length === 0) {
@@ -162,6 +169,7 @@ const useNodeBonALICE = () => {
     isAddingNodeLoading,
     setIsAddingNodeLoading,
     isPeerIDValid,
+    isNodeAddressValid,
   };
 };
 
